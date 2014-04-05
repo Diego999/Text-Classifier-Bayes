@@ -3,6 +3,7 @@ from collections import OrderedDict
 from settings import STOP_WORDS
 from warnings import warn
 
+
 class Document:
     """
     This class represent a document. This document could be a description or text parsing for a website
