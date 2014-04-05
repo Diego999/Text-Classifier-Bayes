@@ -1,5 +1,5 @@
 from text_analysis import Document, Corpus, Classifier
-from settings import CLASSES, DATA_TAGGED_PATH, SEPARATOR, PERCENTAGE_FOR_TRAINING_SET
+from settings import CLASSES, DATA_TAGGED_PATH, SEPARATOR, PERCENTAGE_FOR_TRAINING_SET, NUMBER_OF_SAMPLES
 from os import listdir
 from random import shuffle
 import codecs
@@ -18,15 +18,33 @@ def load_files():
     return texts
 
 
-def create_training_validation_set(texts):
+def merge_classes(texts):
     merge = []
     for k, v in texts.items():
         for vv in v:
             merge.append((k, vv))
+    return merge
+
+
+def create_training_validation_set(texts):
+    merge = merge_classes(texts)
     shuffle(merge)
 
     split = int(PERCENTAGE_FOR_TRAINING_SET*len(merge))
     return merge[0:split], merge[split:]
+
+
+def create_training_validation_set_cross_validation(texts):
+    merge = merge_classes(texts)
+    shuffle(merge)
+    step = len(merge)/NUMBER_OF_SAMPLES
+
+    out = []
+    for i in xrange(0, NUMBER_OF_SAMPLES-1):
+        validation = merge[i*step:(i+1)*step]
+        training = merge[:i*step] + merge[(i+1)*step:]
+        out.append((training, validation))
+    return out
 
 
 def create_documents(set):
@@ -46,19 +64,48 @@ def prepare_validation(set):
         sets.append((s[0], text))
     return sets
 
-training, validation = create_training_validation_set(load_files())
 
-corpus = Corpus()
-for d in create_documents(training):
-    corpus.add_document(d[1], d[0])
+def validation_iteration(training, validation):
+    corpus = Corpus()
+    for d in create_documents(training):
+        corpus.add_document(d[1], d[0])
 
-classifier = Classifier(corpus)
-success = 0
+    classifier = Classifier(corpus)
+    success = 0
+    for v in prepare_validation(validation):
+        if classifier.classify(v[1]) == v[0]:
+            success += 1.0
+    return success, len(validation)
 
-for v in prepare_validation(validation):
-    if classifier.classify(v[1]) == v[0]:
-        success += 1.0
 
-print 100.0*success/len(validation), '% : ', int(success), '/' , len(validation)
+def normal_validation():
+    training, validation = create_training_validation_set(load_files())
+    return validation_iteration(training, validation)
+
+
+def avg(list):
+    return sum(list)/float(len(list))
+
+
+def cross_validation():
+    results = []
+    len = []
+    for sets in create_training_validation_set_cross_validation(load_files()):
+        success, len_validation = validation_iteration(sets[0], sets[1])
+        results.append(success)
+        len.append(len_validation)
+    return avg(results), avg(len)
+
+
+def execute(f):
+    success, len_validation = globals()[f]()
+    print f
+    print 100.0*success/len_validation, '% : ', int(success), '/', int(len_validation)
+    print ''
+
+if __name__ == '__main__':
+    execute('cross_validation')
+    execute('normal_validation')
+
 
 

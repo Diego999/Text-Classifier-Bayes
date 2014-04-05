@@ -4,6 +4,7 @@ CLASSES = ['pos', 'neg']
 STOP_WORD_FILE_PATH = 'data/frenchST.txt'
 SEPARATOR = '\t'
 
+NUMBER_OF_SAMPLES = 10
 PERCENTAGE_FOR_TRAINING_SET = 0.8
 
 STOP_WORDS = []
