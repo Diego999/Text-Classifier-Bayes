@@ -12,28 +12,28 @@ with open(STOP_WORD_FILE_PATH, 'r') as f:
         STOP_WORDS.append(l.decode('utf-8'))
 
 """ cf http://www.ims.uni-stuttgart.de/institut/mitarbeiter/schmid/french-tagset.html """
-ABBREVIATION = 'ABR'
-ADJECTIVE = 'ADJ'
-ADVERB = 'ADV'
-DETERMINANT = 'DET:ART', 'DET:POS'
-INTERJECTION = 'INT'
-CONJUNCTION = 'KON'
-PROPER_NAME = 'NAM'
-NOUN = 'NOM'
-NUMERAL = 'NUM'
-PRONOUN = 'PRO', 'PRO:DEM', 'PRO:IND', 'PRO:PER', 'PRO:POS', 'PRO:REL'
-PREPOSITION = 'RP', 'PRP:det'
-PUNCTUATION = 'PUN', 'PUN:cit'
-SENTENCE_TAG = 'SENT'
-SYMBOL = 'SYM'
-VERB = 'VER:cond', 'VER:futu', 'VER:impe', 'VER:impf', 'VER:infi', 'VER:pper', 'VER:ppre', 'VER:pres', \
-       'VER:simp', 'VER:subi', 'VER:subp'
-UNKNOWN = '<unknown>'
+ABBREVIATION = ['ABR']
+ADJECTIVE = ['ADJ']
+ADVERB = ['ADV']
+DETERMINANT = ['DET:ART', 'DET:POS']
+INTERJECTION = ['INT']
+CONJUNCTION = ['KON']
+PROPER_NAME = ['NAM']
+NOUN = ['NOM']
+NUMERAL = ['NUM']
+PRONOUN = ['PRO', 'PRO:DEM', 'PRO:IND', 'PRO:PER', 'PRO:POS', 'PRO:REL']
+PREPOSITION = ['RP', 'PRP:det']
+PUNCTUATION = ['PUN', 'PUN:cit']
+SENTENCE_TAG = ['SENT']
+SYMBOL = ['SYM']
+VERB = ['VER:cond', 'VER:futu', 'VER:impe', 'VER:impf', 'VER:infi', 'VER:pper', 'VER:ppre', 'VER:pres', \
+       'VER:simp', 'VER:subi', 'VER:subp']
+UNKNOWN = ['<unknown>']
 
 KEPT_TAGS = []  # Will be taken into account for classification
 for c in [PROPER_NAME, NOUN, VERB]:
-    KEPT_TAGS += list(c)
+    KEPT_TAGS += c
 
 REFUSED_TAGS = []  # Won't be taken into account for the statistics
 for c in [PUNCTUATION, SENTENCE_TAG, UNKNOWN]:
-    REFUSED_TAGS += list(c)
+    REFUSED_TAGS += c

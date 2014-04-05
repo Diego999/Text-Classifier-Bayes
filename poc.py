@@ -1,12 +1,37 @@
 from text_analysis import Document, Corpus, Classifier
 
-d1 = Document('kill kill bomb kidnap kidnap kidnap TV')
-d2 = Document('kill bomb kidnap')
-d3 = Document('kill bomb kidnap kidnap movie')
+d1 = Document([['kill', 'VER:infi', 'kill'],
+               ['kill', 'VER:infi', 'kill'],
+               ['bomb', 'NOM', 'bomb'],
+               ['kidnap', 'VER:infi', 'kidnap'],
+               ['kidnap', 'VER:infi', 'kidnap'],
+               ['kidnap', 'VER:infi', 'kidnap'],
+               ['TV', 'NOM', 'TV']])
 
-d4 = Document('bomb music music movie TV')
-d5 = Document('kidnap music movie')
-d6 = Document('music music movie movie')
+d2 = Document([['kill', 'VER:infi', 'kill'],
+               ['bomb', 'NOM', 'bomb'],
+               ['kidnap', 'VER:infi', 'kidnap']])
+
+d3 = Document([['kill', 'VER:infi', 'kill'],
+               ['bomb', 'NOM', 'bomb'],
+               ['kidnap', 'VER:infi', 'kidnap'],
+               ['kidnap', 'VER:infi', 'kidnap'],
+               ['movie', 'NOM', 'movie']])
+
+d4 = Document([['bomb', 'NOM', 'bomb'],
+               ['music', 'NOM', 'music'],
+               ['music', 'NOM', 'music'],
+               ['TV', 'NOM', 'TV'],
+               ['movie', 'NOM', 'movie']])
+
+d5 = Document([['kidnap', 'VER:infi', 'kidnap'],
+               ['music', 'NOM', 'music'],
+               ['movie', 'NOM', 'movie']])
+
+d6 = Document([['music', 'NOM', 'music'],
+               ['music', 'NOM', 'music'],
+               ['movie', 'NOM', 'movie'],
+               ['movie', 'NOM', 'movie']])
 
 terrorism = [d1, d2, d3]
 entertainment = [d4, d5, d6]

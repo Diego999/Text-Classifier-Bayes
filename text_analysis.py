@@ -1,6 +1,6 @@
 from math import log10
 from collections import OrderedDict
-from settings import STOP_WORDS
+from settings import STOP_WORDS, KEPT_TAGS
 from warnings import warn
 
 
@@ -23,27 +23,14 @@ class Document:
         """
         Add the text to the document and update the statistics
         """
-        words = text.split()
-
-        for w in words:
-            if w not in STOP_WORDS:
-                if w in self.statistics:
-                    self.statistics[w] += 1
-                else:
-                    self.statistics[w] = 1
-
-    def get_tf(self, term):
-        """
-        Compute the tf of a specific term
-        """
-        if term in self.statistics:
-            occurrence = self.statistics[term]
-            all_occurrences = 0
-            for v in self.statistics.values():
-                all_occurrences += v
-            return float(occurrence)/float(all_occurrences)
-        else:
-            return 0.0
+        for t in text:
+            if t[1] in KEPT_TAGS:
+                w = t[2]
+                if w not in STOP_WORDS:
+                    if w in self.statistics:
+                        self.statistics[w] += 1
+                    else:
+                        self.statistics[w] = 1
 
 
 class Corpus:
@@ -66,7 +53,7 @@ class Corpus:
 
             for d in [d.get_statistics() for d in documents]:
                 for k, v in d.items():
-                    print k, ' ', v
+                    print k,' ', v
                     if k not in final_by_class[classs]:
                         final_by_class[classs][k] = 0
                     final_by_class[classs][k] += v
@@ -92,17 +79,6 @@ class Corpus:
         else:
             warn('The corpus is full ! The document hasn\'t been added !')
 
-    def get_idf(self, term):
-        """
-        Compute the idf of a specific term in the corpus
-        """
-        number_documents_with_term = 0
-        for doc in self.documents:
-            if doc.get_tf(term) != 0:
-                number_documents_with_term += 1
-
-        #  Mathematically the base of the function log is not important
-        return log10(len(self.documents))/number_documents_with_term if number_documents_with_term != 0 else 1
 
     def get_probability_class(self, classs):
         if classs not in self.documents_by_class:
