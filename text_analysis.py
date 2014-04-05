@@ -1,5 +1,4 @@
 from math import log10
-from collections import OrderedDict
 from settings import STOP_WORDS, KEPT_TAGS
 from warnings import warn
 
@@ -94,12 +93,15 @@ class Classifier:
         self.corpus = corpus
         self.statistics_by_class = self.corpus.end_up_corpus()
         self.classes = corpus.get_classes()
+        self.divisors = {}
+        for c in self.classes:
+            self.divisors[c] = sum(float(v) for v in self.statistics_by_class[c].values())
 
     def get_probability_word_with_class(self, word, classs):
         if classs not in self.classes:
             return 0.0
 
-        divisor = (6.0+sum(float(v) for v in self.statistics_by_class[classs].values()))
+        divisor = (6.0+self.divisors[classs])
         if word not in self.statistics_by_class[classs]:
             return 1.0/divisor
         else:
@@ -108,12 +110,13 @@ class Classifier:
     def classify(self, text):
         words = text.split()
         res = {}
-
+        out = [self.classes[0], -float('Inf')]
         for c in self.classes:
             res[c] = 0.0
             for w in words:
                 res[c] += log10(self.get_probability_word_with_class(w, c))
             res[c] += log10(self.corpus.get_probability_class(c))
-
-        return OrderedDict(sorted(res.items(), key=lambda x: x[1], reverse=True)).items()
+            if res[c] > out[1]:
+                out[0], out[1] = c, res[c]
+        return out[0]
 

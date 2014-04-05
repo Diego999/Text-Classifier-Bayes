@@ -25,9 +25,8 @@ def create_training_validation_set(texts):
             merge.append((k, vv))
     shuffle(merge)
 
-    training = merge[0:int(PERCENTAGE_FOR_TRAINING_SET*len(merge))]
-    validation = merge[int(PERCENTAGE_FOR_TRAINING_SET*len(merge)):]
-    return training, validation
+    split = int(PERCENTAGE_FOR_TRAINING_SET*len(merge))
+    return merge[0:split], merge[split:]
 
 
 def create_documents(set):
@@ -57,9 +56,9 @@ classifier = Classifier(corpus)
 success = 0
 
 for v in prepare_validation(validation):
-    if classifier.classify(v[1])[0][0] == v[0]:
+    if classifier.classify(v[1]) == v[0]:
         success += 1.0
-print 100.0*success/len(validation)
 
+print 100.0*success/len(validation), '% : ', int(success), '/' , len(validation)
 
 
