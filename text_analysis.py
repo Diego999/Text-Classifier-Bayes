@@ -24,7 +24,7 @@ class Document:
         Add the text to the document and update the statistics
         """
         for t in text:
-            if t[1] in KEPT_TAGS:
+            if len(t) == 3 and t[1] in KEPT_TAGS:
                 w = t[2]
                 if w not in STOP_WORDS:
                     if w in self.statistics:
@@ -53,7 +53,6 @@ class Corpus:
 
             for d in [d.get_statistics() for d in documents]:
                 for k, v in d.items():
-                    print k,' ', v
                     if k not in final_by_class[classs]:
                         final_by_class[classs][k] = 0
                     final_by_class[classs][k] += v
@@ -78,7 +77,6 @@ class Corpus:
             self.documents.append(document)
         else:
             warn('The corpus is full ! The document hasn\'t been added !')
-
 
     def get_probability_class(self, classs):
         if classs not in self.documents_by_class:
