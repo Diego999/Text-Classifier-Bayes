@@ -1,7 +1,7 @@
 from math import log10
 from collections import OrderedDict
 from settings import STOP_WORDS
-
+from warnings import warn
 
 class Document:
     """
@@ -22,7 +22,7 @@ class Document:
         """
         Add the text to the document and update the statistics
         """
-        words = text.split()#TreeTagger().tag_text(text=text, all_tags=True)
+        words = text.split()
 
         for w in words:
             if w not in STOP_WORDS:
@@ -52,14 +52,14 @@ class Corpus:
 
     def __init__(self):
         self.documents = list()
-        self.classification = {}
+        self.documents_by_class = {}
         self.end_corpus = False
 
     def end_up_corpus(self):
         self.end_corpus = True
 
         final_by_class = {}
-        for classs, documents in self.classification.items():
+        for classs, documents in self.documents_by_class.items():
             if classs not in final_by_class:
                 final_by_class[classs] = {}
 
@@ -72,6 +72,9 @@ class Corpus:
 
         return final_by_class
 
+    def get_classes(self):
+        return self.documents_by_class.keys()
+
     def __contains__(self, item):
         return item in self.documents
 
@@ -80,17 +83,18 @@ class Corpus:
         Add a document in the corpus
         """
         if not self.end_corpus:
-            if classs not in self.classification:
-                self.classification[classs] = []
-            self.classification[classs].append(document)
+            if classs not in self.documents_by_class:
+                self.documents_by_class[classs] = []
+            self.documents_by_class[classs].append(document)
 
             self.documents.append(document)
+        else:
+            warn('The corpus is full ! The document hasn\'t been added !')
 
     def get_idf(self, term):
         """
         Compute the idf of a specific term in the corpus
         """
-
         number_documents_with_term = 0
         for doc in self.documents:
             if doc.get_tf(term) != 0:
@@ -100,26 +104,31 @@ class Corpus:
         return log10(len(self.documents))/number_documents_with_term if number_documents_with_term != 0 else 1
 
     def get_probability_class(self, classs):
-        if classs not in self.classification:
+        if classs not in self.documents_by_class:
             return 0.0
         else:
-            return len(self.classification[classs])/sum(float(len(d)) for d in self.classification.values())
+            return len(self.documents_by_class[classs])/sum(float(len(d)) for d in self.documents_by_class.values())
 
 
 class Classifier:
+    """
+    Class whichs controls the corpus and classify text
+    """
+
     def __init__(self, corpus):
         self.corpus = corpus
-        self.final_by_class = self.corpus.end_up_corpus()
-        self.classes = corpus.classification.keys()
+        self.statistics_by_class = self.corpus.end_up_corpus()
+        self.classes = corpus.get_classes()
 
     def get_probability_word_with_class(self, word, classs):
         if classs not in self.classes:
             return 0.0
-        divisor = (6.0+sum(float(v) for v in self.final_by_class[classs].values()))
-        if word not in self.final_by_class[classs]:
+
+        divisor = (6.0+sum(float(v) for v in self.statistics_by_class[classs].values()))
+        if word not in self.statistics_by_class[classs]:
             return 1.0/divisor
         else:
-            return (self.final_by_class[classs][word]+1.0)/divisor
+            return (self.statistics_by_class[classs][word]+1.0)/divisor
 
     def classify(self, text):
         words = text.split()
