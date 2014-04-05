@@ -1,17 +1,12 @@
 from text_analysis import Document, Corpus, Classifier
 
-data_path_pos = 'data/normal/pos'
-data_tagged_path_pos = 'data/tagged/pos'
-data_path_neg = 'data/normal/pos'
-data_tagged_path_neg = 'data/tagged/pos'
+d1 = Document('kill kill bomb kidnap kidnap kidnap TV')
+d2 = Document('kill bomb kidnap')
+d3 = Document('kill bomb kidnap kidnap movie')
 
-d1 = Document('kill kill bomb kidnap kidnap kidnap TV', 1)
-d2 = Document('kill bomb kidnap', 2)
-d3 = Document('kill bomb kidnap kidnap movie', 3)
-
-d4 = Document('bomb music music movie TV', 4)
-d5 = Document('kidnap music movie', 5)
-d6 = Document('music music movie movie', 6)
+d4 = Document('bomb music music movie TV')
+d5 = Document('kidnap music movie')
+d6 = Document('music music movie movie')
 
 terrorism = [d1, d2, d3]
 entertainment = [d4, d5, d6]

@@ -1,42 +1,16 @@
 from math import log10
 from collections import OrderedDict
-
-stop_word_file_path = 'data/frenchST.txt'
-
-
-def load_stopwords():
-    stopwords = list()
-    with open(stop_word_file_path, 'r') as f:
-        for l in f.read().splitlines():
-            stopwords.append(l.decode('utf-8'))
-    return stopwords
+from settings import STOP_WORDS
 
 
 class Document:
     """
     This class represent a document. This document could be a description or text parsing for a website
     """
-    stopwords = load_stopwords()
 
-    def __init__(self, text, id):
-        self.id = id  # Useful to sort the document
+    def __init__(self, text):
         self.statistics = dict()
         self.add_text(text)
-
-    def __eq__(self, other):
-        return self.id == other
-
-    def __contains__(self, item):
-        return item == self.id
-
-    def __hash__(self):
-        return self.id
-
-    def __str__(self):
-        return str(self.id)
-
-    def get_id(self):
-        return self.id
 
     def get_statistics(self):
         """
@@ -51,7 +25,7 @@ class Document:
         words = text.split()#TreeTagger().tag_text(text=text, all_tags=True)
 
         for w in words:
-            if w not in Document.stopwords:
+            if w not in STOP_WORDS:
                 if w in self.statistics:
                     self.statistics[w] += 1
                 else:
@@ -111,12 +85,6 @@ class Corpus:
             self.classification[classs].append(document)
 
             self.documents.append(document)
-
-    def get_document(self, doc_id):
-        for doc in self.documents:
-            if doc.get_id() == doc_id:
-                return doc
-        return None
 
     def get_idf(self, term):
         """
