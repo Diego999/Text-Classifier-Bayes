@@ -32,7 +32,7 @@ VERB = ['VER:cond', 'VER:futu', 'VER:impe', 'VER:impf', 'VER:infi', 'VER:pper', 
 UNKNOWN = ['<unknown>']
 
 KEPT_TAGS = []  # Will be taken into account for classification
-for c in [NOUN, VERB]:
+for c in [NOUN, VERB, ADJECTIVE]:
     KEPT_TAGS += c
 
 REFUSED_TAGS = []  # Won't be taken into account for the statistics
