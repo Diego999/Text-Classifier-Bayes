@@ -19,6 +19,7 @@ def load_files():
 
 
 def merge_classes(texts):
+    """ Merge all the documents from different classes into one """
     merge = []
     for k, v in texts.items():
         for vv in v:
@@ -27,6 +28,8 @@ def merge_classes(texts):
 
 
 def create_training_validation_set(texts):
+    """ Merge the documents and create a training set and a validation set
+    with the specific option (PERCENTAGE_FOR_TRAINING_SET) """
     merge = merge_classes(texts)
     shuffle(merge)
 
@@ -35,6 +38,8 @@ def create_training_validation_set(texts):
 
 
 def create_training_validation_set_cross_validation(texts):
+    """ Merge the documents and create set of training and validation sets for cross validation
+    with the specific option (NUMBER_OF_SAMPLES) """
     merge = merge_classes(texts)
     shuffle(merge)
     step = len(merge)/NUMBER_OF_SAMPLES
@@ -48,6 +53,7 @@ def create_training_validation_set_cross_validation(texts):
 
 
 def create_documents(set):
+    """ Create as many documents as sets """
     documents = []
     for s in set:
         documents.append((s[0], Document(s[1])))
@@ -55,6 +61,7 @@ def create_documents(set):
 
 
 def prepare_validation(set):
+    """ Transform a document in a several sentences to test """
     sets = []
     for s in set:
         text = ''
@@ -66,6 +73,8 @@ def prepare_validation(set):
 
 
 def validation_iteration(training, validation):
+    """ Create a corpus with the training set and classify the validation set.
+        Return the percentage of success and the length of the validation set """
     corpus = Corpus()
     for d in create_documents(training):
         corpus.add_document(d[1], d[0])
@@ -79,15 +88,20 @@ def validation_iteration(training, validation):
 
 
 def normal_validation():
+    """ Train with normal validation.
+        Return the percentage of success and the length of the validation set"""
     training, validation = create_training_validation_set(load_files())
     return validation_iteration(training, validation)
 
 
 def avg(list):
+    """ Return the average of a list """
     return sum(list)/float(len(list))
 
 
 def cross_validation():
+    """ Train with cross validation
+        Return the percentage of success and the length of the validation set"""
     results = []
     len = []
     for sets in create_training_validation_set_cross_validation(load_files()):
