@@ -67,7 +67,8 @@ def prepare_validation(set):
         text = ''
         for ss in s[1]:
             if len(ss) == 3:
-                text += ss[2] + ' '
+                for sss in ([ss[2]] if '|' not in ss[2] else ss[2].split('|')):
+                    text += sss + ' '
         sets.append((s[0], text))
     return sets
 

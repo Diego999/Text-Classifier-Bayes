@@ -24,12 +24,13 @@ class Document:
         """
         for t in text:
             if len(t) == 3 and t[1] in KEPT_TAGS:
-                w = t[2]
-                if w not in STOP_WORDS:
-                    if w in self.statistics:
-                        self.statistics[w] += 1
-                    else:
-                        self.statistics[w] = 1
+                ww = [t[2]] if '|' not in t[1] else t[2].split('|')
+                for w in ww:
+                    if w not in STOP_WORDS:
+                        if w in self.statistics:
+                            self.statistics[w] += 1
+                        else:
+                            self.statistics[w] = 1
 
 
 class Corpus:
