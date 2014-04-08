@@ -45,7 +45,7 @@ def create_training_validation_set_cross_validation(texts):
     step = len(merge)/NUMBER_OF_SAMPLES
 
     out = []
-    for i in xrange(0, NUMBER_OF_SAMPLES-1):
+    for i in xrange(0, NUMBER_OF_SAMPLES):
         validation = merge[i*step:(i+1)*step]
         training = merge[:i*step] + merge[(i+1)*step:]
         out.append((training, validation))
@@ -137,8 +137,8 @@ def cross_validation():
 
 
 def execute(f):
-    globals()[f]()
     print f
+    globals()[f]()
 
 
 if __name__ == '__main__':
