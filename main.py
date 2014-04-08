@@ -74,22 +74,29 @@ def prepare_validation(set):
 
 def validation_iteration(training, validation):
     """ Create a corpus with the training set and classify the validation set.
-        Return the percentage of success and the length of the validation set """
+        Return the number of success by class and the length of the validation set by class"""
     corpus = Corpus()
     for d in create_documents(training):
         corpus.add_document(d[1], d[0])
 
     classifier = Classifier(corpus)
-    success = 0
+    success = {}
+    len_validation = {}
     for v in prepare_validation(validation):
+        if v[0] not in success:
+            success[v[0]] = 0
+        if v[0] not in len_validation:
+            len_validation[v[0]] = 0
+        len_validation[v[0]] += 1
+
         if classifier.classify(v[1]) == v[0]:
-            success += 1.0
-    return success, len(validation)
+            success[v[0]] += 1
+    return success, len_validation
 
 
 def normal_validation():
     """ Train with normal validation.
-        Return the percentage of success and the length of the validation set"""
+        Return the number of success by class and the length of the validation set """
     training, validation = create_training_validation_set(load_files())
     return validation_iteration(training, validation)
 
@@ -114,11 +121,13 @@ def cross_validation():
 def execute(f):
     success, len_validation = globals()[f]()
     print f
-    print 100.0*success/len_validation, '% : ', int(success), '/', int(len_validation)
+    print 'Total : ', '%.2f' % (100.0*sum(success.values())/float(sum(len_validation.values()))), '%'
+    for k in success.keys():
+        print '\t Class ', k, ' : ', "%.2f" % (100.0*success[k]/float(len_validation[k])), '%% (%s/%s)' % (str(success[k]), str(len_validation[k]))
     print ''
 
 if __name__ == '__main__':
-    execute('cross_validation')
+    #execute('cross_validation')
     execute('normal_validation')
 
 
