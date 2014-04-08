@@ -94,40 +94,55 @@ def validation_iteration(training, validation):
     return success, len_validation
 
 
-def normal_validation():
-    """ Train with normal validation.
-        Return the number of success by class and the length of the validation set """
-    training, validation = create_training_validation_set(load_files())
-    return validation_iteration(training, validation)
-
-
 def avg(list):
     """ Return the average of a list """
     return sum(list)/float(len(list))
 
 
+def display_intermediate_result(success, len_validation, classs):
+    """ Display intermediate result for the classification """
+    print 'Class ', classs, ' : ', "%.2f" % (100.0*success/float(len_validation)), '%% (%s/%s)' % (str(success), str(len_validation))
+
+
+def display_final_result(success, len_validation):
+    """ Display final result for the classification """
+    print '\tTotal : ', '%.2f' % (100.0*success/float(len_validation)), '%'
+    print ' '
+
+
+def normal_validation():
+    """ Train with normal validation """
+    training, validation = create_training_validation_set(load_files())
+
+    success, len_validation = validation_iteration(training, validation)
+    for k in sorted(success.keys()):
+        display_intermediate_result(success[k], len_validation[k], k)
+    print ''
+    display_final_result(sum(success.values()), sum(len_validation.values()))
+
+
 def cross_validation():
-    """ Train with cross validation
-        Return the percentage of success and the length of the validation set"""
+    """ Train with cross validation """
     results = []
     len = []
-    for sets in create_training_validation_set_cross_validation(load_files()):
+    for i, sets in enumerate(create_training_validation_set_cross_validation(load_files())):
         success, len_validation = validation_iteration(sets[0], sets[1])
-        results.append(success)
-        len.append(len_validation)
-    return avg(results), avg(len)
+        print 'Set ', i+1
+        for k in sorted(success.keys()):
+            display_intermediate_result(success[k], len_validation[k], k)
+        print ''
+        results.append(sum(success.values()))
+        len.append(sum(len_validation.values()))
+    display_final_result(avg(results), avg(len))
 
 
 def execute(f):
-    success, len_validation = globals()[f]()
+    globals()[f]()
     print f
-    print 'Total : ', '%.2f' % (100.0*sum(success.values())/float(sum(len_validation.values()))), '%'
-    for k in success.keys():
-        print '\t Class ', k, ' : ', "%.2f" % (100.0*success[k]/float(len_validation[k])), '%% (%s/%s)' % (str(success[k]), str(len_validation[k]))
-    print ''
+
 
 if __name__ == '__main__':
-    #execute('cross_validation')
+    execute('cross_validation')
     execute('normal_validation')
 
 
